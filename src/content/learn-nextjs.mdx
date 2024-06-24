@@ -1,0 +1,42 @@
+---
+title: learn NextJS
+author: Tom
+---
+
+# This is a markdown file
+
+Here is a list of items:
+
+- Item one
+- Item two
+- Item three
+
+```tsx
+import path from "path";
+import fs from "fs";
+import { compileMDX } from "next-mdx-remote/rsc";
+
+const rootDirectory = path.join(process.cwd(), "src/content");
+
+const components = {
+  h1: (props) => (
+    <h1 {...props} className="text-emerald-400">
+      {props.children}
+    </h1>
+  ),
+};
+
+export async function getPostBySlug(slug: string) {
+  const realSlug = slug.replace("/.mdx$/", "");
+  const filePath = path.join(rootDirectory, `${realSlug}.mdx`);
+  const fileContent = fs.readFileSync(filePath, { encoding: "utf8" });
+  const { content, frontmatter } = await compileMDX({
+    components,
+    source: fileContent,
+    options: {
+      parseFrontmatter: true,
+    },
+  });
+  return { content, frontmatter };
+}
+```
